@@ -9,51 +9,62 @@ export default class Home extends React.Component{
 
   constructor(){
     super();
-    this.firebaseItemsUrl = `${SettingsStore.current().firebaseUrl}/items`;
-    this.firebaseRef = new Firebase(this.firebaseItemsUrl);
+    this.usersRef = new Firebase(`${SettingsStore.current().firebaseUrl}/users`);
+    this.worldsRef = new Firebase(`${SettingsStore.current().firebaseUrl}/worlds`);
     this.state = {
-      items: {},
-      text: ""
+      users: {},
+      worlds: {}
     };
   }
 
   componentWillMount(){
-    // Firebase docs for 'on': https://www.firebase.com/docs/web/api/query/on.html
-    this.firebaseRef.on("child_added", function(dataSnapshot) {
-      this.state.items[dataSnapshot.key()] = dataSnapshot.val()
-      this.setState({ items: this.state.items });
+    this.worldsRef.on("child_added", function(data) {
+      new Firebase(`${this.worldsRef}/${data.key()}`).remove();
+      console.log(data.key())
+      this.state.worlds[data.key()] = data.val()
+      this.setState({ worlds: this.state.worlds });
     }.bind(this));
-    this.firebaseRef.on("child_removed", function(dataSnapshot) {
-      delete this.state.items[dataSnapshot.key()];
-      this.setState({ items: this.state.items });
+
+    // Firebase docs for 'on': https://www.firebase.com/docs/web/api/query/on.html
+    this.usersRef.on("child_added", function(data) {
+      this.state.users[data.key()] = data.val()
+      this.setState({ users: this.state.users });
+    }.bind(this));
+    this.usersRef.on("child_removed", function(data) {
+      delete this.state.users[data.key()];
+      this.setState({ users: this.state.users });
     }.bind(this));
   }
 
   componentWillUnmount(){
-    this.firebaseRef.off();
+    this.usersRef.off();
   }
   
-  handleAdd(e){
+  handlePlay(e, id){
     e.preventDefault();
-    this.firebaseRef.push({
-      text: this.refs.newItem.value
-    });
+    var user = this.state.users[id];
+    window.location = `${user.url}?user=`;
   }
 
-  handleDelete(e, id){
-    e.preventDefault();
-    var itemRef = new Firebase(`${this.firebaseItemsUrl}/${id}`);
-    itemRef.remove();
+  addNew(e){
+    var ref = new Firebase(`${SettingsStore.current().firebaseUrl}/worlds/one`);
+    ref.set({
+      name: "world one",
+      url: ""
+    })
   }
 
   render(){
-    var items = _.map(this.state.items, (item, id) => {
-      return <li key={id}>{item.text} <button onClick={(e) => {this.handleDelete(e, id);}}>Delete</button></li>;
+    var users = _.map(this.state.users, (user, id) => {
+      return <li key={id}><button onClick={(e) => { this.handlePlay(e, id); }}>{user.name}</button></li>;
+    });
+    var worlds = _.map(this.state.worlds, (world, id) => {
+      return <li key={id}><button onClick={(e) => { this.handlePlay(e, id); }}>{world.name}</button></li>;
     });
     return(<div>
-      <input ref="newItem" type="text" />
-      <button onClick={(e) => {this.handleAdd(e);}} >Add</button>      
-      <ul>{items}</ul>
+      <button onClick={(e) => { this.addNew(e); }}>Add New</button>
+      <ul>{users}</ul>
+      <ul>{worlds}</ul>
     </div>);
   }
 };
