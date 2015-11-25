@@ -36,7 +36,8 @@ module.exports = {
   buildSuffix: '_web_pack_bundle.js',
 
   entries: {
-    app: clientAppPath + 'js/app.jsx'
+    app: clientAppPath + 'js/app.jsx',
+    maker_world: clientAppPath + 'js/maker_world.js'
   },
 
   cssEntries: {
