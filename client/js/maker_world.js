@@ -6,6 +6,9 @@
   var identifier = 'myname';
   var player = $('#spriteID');
   registerPage(identifier, player);
+
+  see example at:
+  http://upholsterer-calculators-57726.bitballoon.com/
 */
 
 var revar registerPage = function(name, playerReference){
