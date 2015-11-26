@@ -7,8 +7,11 @@
   var player = $('#spriteID');
   registerPage(identifier, player);
 
-  see example at:
+  see live example at:
   http://upholsterer-calculators-57726.bitballoon.com/
+
+  repo @
+  https://github.com/nick-benoit14/CacheMakersHTMLGame
 */
 
 var  registerPage = function(name, playerReference){
