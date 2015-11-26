@@ -11,7 +11,7 @@
   http://upholsterer-calculators-57726.bitballoon.com/
 */
 
-var revar registerPage = function(name, playerReference){
+var  registerPage = function(name, playerReference){
   //TODO: Get world url automatically, border arrow animations, check for page size change
 
   $(document).ready(function(){
